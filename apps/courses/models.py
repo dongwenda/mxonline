@@ -22,6 +22,9 @@ class Course(models.Model):
         verbose_name = '课程'
         verbose_name_plural = verbose_name
 
+    def __str__(self):
+        return self.name
+
 
 class Lesson(models.Model):
     course = models.ForeignKey(Course, verbose_name='课程')  # 一对多，多对一都是用外键来关联

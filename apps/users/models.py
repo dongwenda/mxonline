@@ -10,7 +10,7 @@ from django.contrib.auth.models import AbstractUser  # auth_user表的类
 class UserProfile(AbstractUser):
     nick_name = models.CharField(max_length=50,verbose_name='昵称',default='')
     birhday = models.DateField(verbose_name='生日',null=True,blank=True)
-    gender = models.CharField(choices=(('male','男'),('female','女')), default='female',max_length=5)
+    gender = models.CharField(choices=(('male','男'),('female','女')), default='female',max_length=6 )
     address = models.CharField(max_length=100,default='')
     mobile = models.CharField(max_length=11, null=True,blank=True)
     image = models.ImageField(upload_to='image/%Y/%m',default='image/default.png',max_length=100)
@@ -25,14 +25,17 @@ class UserProfile(AbstractUser):
 
 
 class EmailVerifyRecord(models.Model):
-    code = models.CharField(max_length=20,verbose_name='验证码')
+    code = models.CharField(max_length=20,verbose_name='验证码')   # verbose_name后台表字段名字
     email = models.EmailField(max_length=50,verbose_name='邮箱')
-    send_type = models.CharField(choices=(('register','注册'),('forget','找回密码')),max_length=10)
-    send_time = models.DateTimeField(default=datetime.now)  #datetime.now() 括号要去掉，实例化的时间。如果不去掉，是生成表的时间
+    send_type = models.CharField(choices=(('register','注册'),('forget','找回密码')),max_length=10,verbose_name='验证码类型')
+    send_time = models.DateTimeField(default=datetime.now,verbose_name='发送时间')  #datetime.now() 括号要去掉，实例化的时间。如果不去掉，是生成表的时间
 
     class Meta:
-        verbose_name = '邮箱验证码'
-        verbose_name_plural = verbose_name
+        verbose_name = '邮箱验证码'  # 后台表的名字
+        verbose_name_plural = verbose_name  # 不设置这个值，就会自动加s
+
+    def __str__(self):
+        return '{}({})'.format(self.email,self.code)
 
 
 class Banner(models.Model):

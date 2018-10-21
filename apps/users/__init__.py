@@ -1,0 +1,1 @@
+default_app_config = "users.apps.UsersConfig"   # 默认的app配置文件

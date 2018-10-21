@@ -16,6 +16,7 @@ import sys
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, os.path.join(BASE_DIR, 'apps'))  # apps添加到环境变量
+sys.path.insert(0, os.path.join(BASE_DIR, 'extra_apps'))  # extra_apps添加到环境变量
 
 
 # Quick-start development settings - unsuitable for production
@@ -31,6 +32,9 @@ ALLOWED_HOSTS = []
 
 
 # Application definition
+AUTHENTICATION_BACKENDS = (
+    'users.views.CustomBackend',
+)# 配置一下这个，重写认证的方法
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -42,7 +46,10 @@ INSTALLED_APPS = [
     'users',
     'courses',
     'organization',
-    'operation'
+    'operation',
+    'xadmin',       # 使用xadmin后台
+    'crispy_forms',  # 需要添加
+    'captcha'   # 验证码
 ]
 
 AUTH_USER_MODEL = 'users.UserProfile'   # 引用了 auth_user表需要定义这个
@@ -115,18 +122,30 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/1.11/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'zh-hans'# 中文 # 'en-us' 英文
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Shanghai'   # 时区
 
 USE_I18N = True
 
 USE_L10N = True
 
-USE_TZ = True
+USE_TZ = False # 本地时间 # True的话，数据库存储时间，使用utc国际时间
 
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.11/howto/static-files/
 
 STATIC_URL = '/static/'
+STATICFILES_DIRS = [
+	os.path.join(BASE_DIR, 'static')
+]# 配置static文件路径
+
+
+# 发送邮箱信息配置
+EMAIL_HOST = "smtp.exmail.qq.com"
+EMAIL_PORT = 465
+EMAIL_HOST_USER = "403210911@qq.com"
+EMAIL_HOST_PASSWORD = "@bcd1234"
+EMAIL_USE_TLS = True
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
