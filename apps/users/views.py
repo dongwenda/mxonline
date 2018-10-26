@@ -5,9 +5,10 @@ from django.db.models import Q # 用来查并集
 from django.views.generic.base import View
 from django.contrib.auth.hashers import make_password # 注册密码
 
-from .models import UserProfile
+from .models import UserProfile, EmailVerifyRecord
 from .forms import LoginForm, RegisterForm
 from utlis.email_send import send_register_email
+
 
 # Create your views here.
 class CustomBackend(ModelBackend): #重写认证方法
@@ -18,6 +19,7 @@ class CustomBackend(ModelBackend): #重写认证方法
                 return user
         except Exception as e:
             return None
+
 
 class LoginView(View):  # 用类来写view，代替之前的函数，这个会更灵活
     def get(self, request):
@@ -31,8 +33,11 @@ class LoginView(View):  # 用类来写view，代替之前的函数，这个会�
             user = authenticate(username=username,
                                 password=password)  # 无效就返回None，有效就返回这个用户
             if user is not None:
-                login(request, user)  # 登录
-                return render(request, "index.html")
+                if user.is_active:
+                    login(request, user)  # 登录
+                    return render(request, "index.html")
+                else:
+                    return render(request, 'login.html', {"msg": "请通过邮箱激活该账号!"})
             else:
                 return render(request, 'login.html', {"msg": "用户名或密码错误!"})
         else:
@@ -48,12 +53,30 @@ class RegisterView(View):
             email = request.POST.get('email', '')
             password = request.POST.get('password', '')
             user_profile = UserProfile()
-            user_profile.email = email
+            user_profile.username = email
             user_profile.password = make_password(password)
+            user_profile.is_active = False
             user_profile.save()
             send_register_email(email, 'register')
+            return render(request, 'login.html')
         else:
             return render(request, 'register.html', locals())
+
+
+class ActiveUserVIew(View):
+    def get(self, request, active_code):
+        try:
+            code = EmailVerifyRecord.objects.get(code=active_code)
+            email = code.email
+            user = UserProfile.objects.get(username=email)
+            user.is_active = True
+            user.save()
+            code.delete()
+            return render(request, 'login.html')
+        except:
+            return render(request, 'register.html')
+
+
 
 
 def user_login(request):

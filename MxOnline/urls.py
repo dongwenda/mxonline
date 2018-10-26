@@ -18,7 +18,7 @@ from django.contrib import admin
 from django.views.generic import TemplateView # 处理静态文件
 import xadmin   # 换成xadmin后台管理系统
 
-from users.views import LoginView, RegisterView
+from users.views import LoginView, RegisterView, ActiveUserVIew
 
 urlpatterns = [
     url(r'^xadmin/', xadmin.site.urls), # 替换成 xadmin
@@ -26,4 +26,5 @@ urlpatterns = [
     url(r'^login/$', LoginView.as_view(), name='login'),
     url(r'^register/$', RegisterView.as_view(), name='register'),
     url(r'^captcha/', include('captcha.urls')),
+    url(r'^active/(?P<active_code>.*)/$', ActiveUserVIew.as_view(), name='user_active')
 ]
