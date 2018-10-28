@@ -40,3 +40,16 @@ def send_register_email(email, send_type):
         # 如果发送成功
         if send_status:
             pass
+
+    elif send_type == "forget":
+        email_title = "慕课小站 重置密码链接"
+        email_body = "欢迎注册慕课小站:  请点击下面的链接重置你的密码: http://127.0.0.1:8000/reset/{0}".format(
+            code)
+
+        # 使用Django内置函数完成邮件发送。四个参数：主题，邮件内容，从哪里发，接受者list
+        send_status = send_mail(email_title, email_body, DEFAULT_FROM_EMAIL,
+                                [email])
+
+        # 如果发送成功
+        if send_status:
+            pass

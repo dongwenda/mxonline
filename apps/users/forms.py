@@ -12,3 +12,13 @@ class RegisterForm(forms.Form):
     email = forms.EmailField(required=True)
     password = forms.CharField(required=True, min_length=3)
     captcha = CaptchaField(required=True, error_messages={"invalid": "验证码错误"}) # 验证码
+
+
+class ForgetForm(forms.Form):
+    email = forms.EmailField(required=True)
+    captcha = CaptchaField(required=True, error_messages={"invalid": "验证码错误"}) # 验证码
+
+
+class ModifyPwdForm(forms.Form):
+    password1 = forms.CharField(required=True, min_length=5)
+    password2 = forms.CharField(required=True, min_length=5)

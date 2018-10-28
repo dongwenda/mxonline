@@ -17,8 +17,11 @@ from django.conf.urls import url, include
 from django.contrib import admin
 from django.views.generic import TemplateView # 处理静态文件
 import xadmin   # 换成xadmin后台管理系统
+from django.views.static import serve  # 处理静态文件
 
-from users.views import LoginView, RegisterView, ActiveUserVIew
+from users.views import LoginView, RegisterView, ActiveUserVIew, ForgetPwdView, ResetVIew, ModifyPwdView
+from organization.views import OriView
+from MxOnline.settings import MEDIA_ROOT
 
 urlpatterns = [
     url(r'^xadmin/', xadmin.site.urls), # 替换成 xadmin
@@ -26,5 +29,11 @@ urlpatterns = [
     url(r'^login/$', LoginView.as_view(), name='login'),
     url(r'^register/$', RegisterView.as_view(), name='register'),
     url(r'^captcha/', include('captcha.urls')),
-    url(r'^active/(?P<active_code>.*)/$', ActiveUserVIew.as_view(), name='user_active')
+    url(r'^active/(?P<active_code>.*)/$', ActiveUserVIew.as_view(), name='user_active'),
+    url(r'^forget/$', ForgetPwdView.as_view(), name='forget_pwd'),
+    url(r'^reset/(?P<active_code>.*)/$', ResetVIew.as_view(), name='reset_pwd'),
+    url(r'^modify_pwd/$', ModifyPwdView.as_view(), name='modify_pwd'),
+    url(r'^media/(?P<path>.*)$', serve, {"document_root": MEDIA_ROOT}), # 配置上传文件的访问处理函数
+    url(r'^org/', include('organization.urls', namespace='org')), # 课程机构url配置
+    url(r'^course/', include('courses.urls', namespace='course')) # 课程相关url配置
 ]

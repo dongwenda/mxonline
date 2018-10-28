@@ -49,7 +49,8 @@ INSTALLED_APPS = [
     'operation',
     'xadmin',       # 使用xadmin后台
     'crispy_forms',  # 需要添加
-    'captcha'   # 验证码
+    'captcha',   # 验证码
+    'pure_pagination' #分页
 ]
 
 AUTH_USER_MODEL = 'users.UserProfile'   # 引用了 auth_user表需要定义这个
@@ -78,6 +79,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'django.template.context_processors.media', # 模板中要使用{{media}}，配置
             ],
         },
     },
@@ -146,6 +148,11 @@ STATICFILES_DIRS = [
 EMAIL_HOST = "smtp.qq.com"
 EMAIL_PORT = 25
 EMAIL_HOST_USER = "403219011@qq.com"
-EMAIL_HOST_PASSWORD = "wcmsttuklcewcaae"
+EMAIL_HOST_PASSWORD = "wjpwlludfmfobgie"
 EMAIL_USE_TLS = True
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+
+
+# 上传文件路径配置
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
