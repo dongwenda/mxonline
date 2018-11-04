@@ -62,7 +62,9 @@
                 {% for page in all_courses.pages %}
                     {% if page %}
                         {% ifequal page all_courses.number %}
-                            <li class="active"><a href="?{{ page.querystring }}">{{ page }}</a></li>
+                            {% ifnotequal all_courses.start_index 0 %}
+                                <li class="active"><a href="?{{ page.querystring }}">{{ page }}</a></li>
+                            {% endifnotequal %}
                         {% else %}
                             <li><a href="?{{ page.querystring }}" class="page">{{ page }}</a></li>
                         {% endifequal %}
