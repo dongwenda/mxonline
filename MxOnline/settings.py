@@ -26,9 +26,9 @@ sys.path.insert(0, os.path.join(BASE_DIR, 'extra_apps'))  # extra_apps添加到�
 SECRET_KEY = '1qy_wp033ftt(j*@86)#_&*4z(6a&6)#x(@gs^glb57n-h)*h)'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = True        # True时，404和500都不展示。生产要改成False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']      #False 时，这里有要设置允许的客户端访问
 
 
 # Application definition
@@ -141,7 +141,7 @@ USE_TZ = False # 本地时间 # True的话，数据库存储时间，使用utc�
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [
 	os.path.join(BASE_DIR, 'static')
-]# 配置static文件路径
+]# 配置static文件路径， debug = False时，这个会失效
 
 
 # 发送邮箱信息配置
@@ -156,3 +156,4 @@ DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 # 上传文件路径配置
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+#STATIC_ROOT = os.path.join(BASE_DIR, 'static') 生产配置

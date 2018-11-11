@@ -23,6 +23,7 @@ class Course(models.Model):
     tag = models.CharField(max_length=30,verbose_name='课程标签', default='')
     youneed_know = models.CharField(max_length=300,verbose_name='课程须知', null=True, blank=True)
     teacher_tell = models.CharField(max_length=300,verbose_name='老师告诉你', null=True, blank=True)
+    is_banner = models.BooleanField(default=False, verbose_name='是否轮播图')
     add_time = models.DateTimeField(default=datetime.now,verbose_name='添加时间')
 
     class Meta:
@@ -42,6 +43,16 @@ class Course(models.Model):
 
     def get_course_lesson(self):
         return self.lesson_set.all()
+
+
+class BannerCourse(Course):
+    """
+    这个表，用来注册不同的数据
+    """
+    class Meta:
+        verbose_name = "轮播课程"
+        verbose_name_plural = verbose_name
+        proxy = True   # Course 同一张表。这要设置成True 不然会重新再建一张表
 
 
 class Lesson(models.Model):

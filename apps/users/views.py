@@ -1,18 +1,20 @@
 import json
 
 from django.shortcuts import render
-from django.contrib.auth import authenticate, login # authenticate用来用户验证,login用来登录
+from django.contrib.auth import authenticate, login, logout # authenticate用来用户验证,login用来登录
 from django.contrib.auth.backends import ModelBackend # 认证方法的类
 from django.db.models import Q # 用来查并集
 from django.views.generic.base import View
 from django.contrib.auth.hashers import make_password # 注册密码
-from django.http import HttpResponse # 指明返回给用户的是什么类型的数据
+from django.http import HttpResponse, HttpResponseRedirect # 指明返回给用户的是什么类型的数据
+from pure_pagination import Paginator, EmptyPage, PageNotAnInteger
+from django.core.urlresolvers import reverse
 
-from .models import UserProfile, EmailVerifyRecord
+from .models import UserProfile, EmailVerifyRecord, Banner
 from .forms import LoginForm, RegisterForm, ForgetForm, ModifyPwdForm, UploadImageForm, UserInfoForm
 from utlis.email_send import send_email
 from utlis.mixin_utils import LoginRequireMixin
-from operation.models import UserCourse, UserFavorite
+from operation.models import UserCourse, UserFavorite, UserMessage
 from organization.models import CourseOrg, Teacher
 from courses.models import Course
 
@@ -42,13 +44,20 @@ class LoginView(View):  # 用类来写view，代替之前的函数，这个会�
             if user is not None:
                 if user.is_active:
                     login(request, user)  # 登录
-                    return render(request, "index.html")
+                    return HttpResponseRedirect(reverse('index'))
                 else:
                     return render(request, 'login.html', {"msg": "请通过邮箱激活该账号!"})
             else:
                 return render(request, 'login.html', {"msg": "用户名或密码错误!"})
         else:
             return render(request, 'login.html', {"login_form": login_form})
+
+
+class LogoutView(View):
+    def get(self, request):
+        logout(request)
+        #  重定向
+        return HttpResponseRedirect(reverse('index'))
 
 class RegisterView(View):
     def get(self, request):
@@ -66,6 +75,13 @@ class RegisterView(View):
             user_profile.password = make_password(password)
             user_profile.is_active = False
             user_profile.save()
+
+            # 写入欢迎注册消息
+            user_message = UserMessage()
+            user_message.user = user_profile.id
+            user_message.message = '欢迎注册暮雪在线网！'
+            user_message.save()
+
             send_email(email, 'register')
             return render(request, 'login.html')
         else:
@@ -317,3 +333,58 @@ class MyFavCourseView(LoginRequireMixin, View):
         return render(request, 'usercenter-fav-course.html', {
             'course_list': course_list
         })
+
+
+class MymessageView(LoginRequireMixin, View):
+    """
+    我的消息
+    """
+    def get(self, request):
+        all_messages = UserMessage.objects.filter(
+            Q(user=0) |
+            Q(user=request.user.id)
+        )  # icontain 不区分大小写;Q查并集
+        unread_msg = all_messages.filter(user=request.user.id, has_read=False)
+        for msg in unread_msg:
+            msg.has_read = True
+            msg.save()
+
+        # 分页
+        try:
+            page = request.GET.get('page', 1)
+        except PageNotAnInteger:
+            page = 1
+        p = Paginator(all_messages, 1, request=request)
+        messages = p.page(page)
+
+        return render(request, 'usercenter-message.html', {'messages': messages})
+
+
+class IndexView(View):
+    # 首页
+    def get(self, request):
+        all_banners = Banner.objects.all().order_by('index')
+        banner_courses = Course.objects.filter(is_banner=True)[:3]
+        courses = Course.objects.filter(is_banner=False)[:6]
+        course_orgs = CourseOrg.objects.all()[:15]
+        return render(request, 'index.html',{
+            'all_banners': all_banners,
+            'banner_courses': banner_courses,
+            'courses': courses,
+            'course_orgs': course_orgs
+        })
+
+
+def page_not_found(request):
+    # 全局404处理函数
+    from django.shortcuts import render_to_response
+    response = render_to_response('404.html', {})
+    response.status_code = 404
+    return response
+
+
+def page_error(request):
+    from django.shortcuts import render_to_response
+    response = render_to_response('500.html', {})
+    response.status_code = 500
+    return response

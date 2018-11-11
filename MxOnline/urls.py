@@ -19,14 +19,16 @@ from django.views.generic import TemplateView # 处理静态文件
 import xadmin   # 换成xadmin后台管理系统
 from django.views.static import serve  # 处理静态文件
 
-from users.views import LoginView, RegisterView, ActiveUserVIew, ForgetPwdView, ResetVIew, ModifyPwdView
+from users.views import LoginView, LogoutView, RegisterView, ActiveUserVIew, ForgetPwdView, ResetVIew, ModifyPwdView, IndexView
 from organization.views import OriView
-from MxOnline.settings import MEDIA_ROOT
+from MxOnline.settings import MEDIA_ROOT#, STATIC_ROOT
 
 urlpatterns = [
     url(r'^xadmin/', xadmin.site.urls), # 替换成 xadmin
-    url(r'^$', TemplateView.as_view(template_name='index.html'), name='index'),
+    #url(r'^$', TemplateView.as_view(template_name='index.html'), name='index'),
+    url(r'^$', IndexView.as_view(), name='index'),
     url(r'^login/$', LoginView.as_view(), name='login'),
+    url(r'^logout/$', LogoutView.as_view(), name='logout'),
     url(r'^register/$', RegisterView.as_view(), name='register'),
     url(r'^captcha/', include('captcha.urls')),
     url(r'^active/(?P<active_code>.*)/$', ActiveUserVIew.as_view(), name='user_active'),
@@ -34,7 +36,13 @@ urlpatterns = [
     url(r'^reset/(?P<active_code>.*)/$', ResetVIew.as_view(), name='reset_pwd'),
     url(r'^modify_pwd/$', ModifyPwdView.as_view(), name='modify_pwd'),
     url(r'^media/(?P<path>.*)$', serve, {"document_root": MEDIA_ROOT}), # 配置上传文件的访问处理函数
+
+    #url(r'^static/(?P<path>.*)$', serve, {"document_root": STATIC_ROOT}), # 生产配置
     url(r'^org/', include('organization.urls', namespace='org')), # 课程机构url配置
     url(r'^course/', include('courses.urls', namespace='course')), # 课程相关url配置
     url(r'^user/', include('users.urls', namespace='user')) # 课程相关url配置
 ]
+
+# 全局404页面配置
+handler404 = 'users.views.page_not_found'
+handler500 = 'users.views.page_error'

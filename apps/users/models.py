@@ -19,9 +19,15 @@ class UserProfile(AbstractUser):
         verbose_name = '用户信息'
         verbose_name_plural = verbose_name
 
-
     def __str__(self):
         return self.username
+
+    def unread_nums(self):
+        # 获取用户未读消息的数量，尽量在函数要调用时倒入调入
+        # 两个model如果互相调用，会出现循环调用，这种时候可以分离出第三个model来解决
+        from operation.models import UserMessage
+        from django.db.models import Q
+        return UserMessage.objects.filter(Q(user=self.id,has_read=False)|Q(user=0)).count()
 
 
 class EmailVerifyRecord(models.Model):
