@@ -36,6 +36,12 @@ class Course(models.Model):
     def get_zj_nums(self):
         # 获取指向它的，外键对象，这里返回一个queryset
         return self.lesson_set.count()
+    get_zj_nums.short_description = '章节数'  # 在xadmin显示该名字
+
+    def go_to(self):
+        from django.utils.safestring import mark_safe
+        return mark_safe("<a href='https://www.baidu.com'>跳转</>")   # 返回html，不加make_safe的话会被转译
+    go_to.short_description = '章节数'  # 在xadmin显示该名字
 
     def get_learn_users(self):
         # 获取学习这门课的用户

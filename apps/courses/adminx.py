@@ -15,20 +15,33 @@ class CourseResourceInline():
     extra = 0
 
 class CourseAdmin(object):
-    list_display = ['name', 'desc', 'detail', 'degree', 'learn_times','students','fav_nums','image','click_nums','add_time']  # 后台展示出来的字段
+    list_display = ['name', 'desc', 'detail', 'degree', 'learn_times','students','fav_nums','image','click_nums','add_time', 'get_zj_nums', 'go_to']  # 后台展示出来的字段
     search_fields = ['name', 'desc', 'detail', 'degree', 'learn_times','students','fav_nums','image','click_nums']
     list_filter = ['name', 'desc', 'detail', 'degree', 'learn_times','students','fav_nums','image','click_nums','add_time']
     ordering = ['-click_nums']  #默认排序
     readonly_fields = ['click_nums'] # 只读字段
     exclude = ['fav_nums'] # 编辑态不显示   readonly_fields，exclude不能同时
     inlines = [LessonInline, CourseResourceInline]  #在课程里面，也可以添加这两个表，只能一层嵌套
+    list_editable = ['degree', 'desc']   # 在列表也可以编辑的字段
+    refresh_times = [3, 5]  # 自动刷新时间
 
 
     def queryset(self):
-        # 过滤
-        qs = super(CourseAdmin, self).queryset()
+        # 请求，过滤
+        qs = super().queryset()
         qs = qs.filter(is_banner=False)
         return qs
+
+
+    def save_models(self):
+        # 在save或者新增，会触发该方法
+        # 在保存课程的时候，统计课程机构的数量
+        obj = self.new_obj
+        obj.save()
+        if obj.course_org:
+            course_org = obj.course_org
+            course_org.course_nums = Course.objects.filter(course_org=course_org).count()
+            course_org.save()
 
 
 class BannerCourseAdmin(object):
