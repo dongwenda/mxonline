@@ -24,7 +24,8 @@ class CourseAdmin(object):
     inlines = [LessonInline, CourseResourceInline]  #在课程里面，也可以添加这两个表，只能一层嵌套
     list_editable = ['degree', 'desc']   # 在列表也可以编辑的字段
     refresh_times = [3, 5]  # 自动刷新时间
-
+    style_fields = {'detail': 'ueditor'}
+    import_excel = True
 
     def queryset(self):
         # 请求，过滤
@@ -42,6 +43,14 @@ class CourseAdmin(object):
             course_org = obj.course_org
             course_org.course_nums = Course.objects.filter(course_org=course_org).count()
             course_org.save()
+
+
+    # def post(self, request, *args, **kwargs):
+    #     if 'excel' in request.FILES:
+    #         pass
+    #     return super().post(request, args, kwargs)
+
+
 
 
 class BannerCourseAdmin(object):

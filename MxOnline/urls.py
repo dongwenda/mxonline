@@ -40,7 +40,8 @@ urlpatterns = [
     #url(r'^static/(?P<path>.*)$', serve, {"document_root": STATIC_ROOT}), # 生产配置
     url(r'^org/', include('organization.urls', namespace='org')), # 课程机构url配置
     url(r'^course/', include('courses.urls', namespace='course')), # 课程相关url配置
-    url(r'^user/', include('users.urls', namespace='user')) # 课程相关url配置
+    url(r'^user/', include('users.urls', namespace='user')), # 课程相关url配置
+    url(r'^ueditor/',include('DjangoUeditor.urls' ))    #富文本
 ]
 
 # 全局404页面配置

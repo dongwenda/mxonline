@@ -50,7 +50,8 @@ INSTALLED_APPS = [
     'xadmin',       # 使用xadmin后台
     'crispy_forms',  # 需要添加
     'captcha',   # 验证码
-    'pure_pagination' #分页
+    'pure_pagination', #分页
+    'DjangoUeditor' # 富文本编辑器
 ]
 
 AUTH_USER_MODEL = 'users.UserProfile'   # 引用了 auth_user表需要定义这个
