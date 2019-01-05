@@ -13,7 +13,8 @@ class ListImportExcelPlugin(BaseAdminPlugin):
         return bool(self.import_excel)
 
     def block_top_toolbar(self, context, nodes):
+        pass
         # nodes.append(loader.render_to_string('xadmin/excel/model_list.top_toolbar.import.html', context_instance=context))
-        nodes.append(loader.render_to_string('xadmin/excel/model_list.top_toolbar.import.html', context=context))
+        #nodes.append(loader.render_to_string('xadmin/excel/model_list.top_toolbar.import.html', context=context))
 
 xadmin.site.register_plugin(ListImportExcelPlugin, ListAdminView)

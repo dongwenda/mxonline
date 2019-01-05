@@ -26,7 +26,7 @@ sys.path.insert(0, os.path.join(BASE_DIR, 'extra_apps'))  # extra_apps添加到�
 SECRET_KEY = '1qy_wp033ftt(j*@86)#_&*4z(6a&6)#x(@gs^glb57n-h)*h)'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True        # True时，404和500都不展示。生产要改成False
+DEBUG = False        # True时，404和500都不展示。生产要改成False
 
 ALLOWED_HOSTS = ['*']      #False 时，这里有要设置允许的客户端访问
 
@@ -97,7 +97,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'mxonline',
         'USER': 'root',
-        'PASSWORD': '',
+        'PASSWORD': '123456',
         'HOST': '127.0.0.1'
     }
 }
@@ -157,4 +157,4 @@ DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 # 上传文件路径配置
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-#STATIC_ROOT = os.path.join(BASE_DIR, 'static') 生产配置
+STATIC_ROOT = os.path.join(BASE_DIR, 'static') #生产配置
