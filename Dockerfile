@@ -21,7 +21,7 @@ CMD ["uwsgi", "-i", "conf/uwsgi.ini"]
 
 # 启动uwsgi后，查看该容器的ip为多少
 # docker network inspect bridge   #172.17.0.3
-# 修改uc_nginx.conf的uwsgi server的ip
+# 修改nginx.conf的uwsgi server的ip
 # docker run --name mxng -v $PWD/conf/nginx.conf:/etc/nginx/nginx.conf -v $PWD:/mxonline -p 80:80 -d ng1.12.1
 
 # admin 84305684a
